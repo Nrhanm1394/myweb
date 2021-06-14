@@ -33,49 +33,34 @@ import {TextField,Container,Grid,ButtonBase,Typography,Paper,Tooltip,Button,Form
 
 function App() {
   const [data, setData] = useState([]);
-  const [search,setSearch] = useState('');
-  // const [check,setCheck] = useState ([]);
+  const [search,setSearch] = useState([]);
+  const [check,setCheck] = useState ([]);
   const classes = useStyles();
-  // const query = new URLSearchParams(search).get('q');
-  // const filteredData = filterPosts(data, searchQuery);
-  // const [searchQuery, setSearchQuery] = useState(query || '');
+
   useEffect(() => {
     axios
-      .get(`http://localhost:9000/trips`)
+      .get(`http://localhost:9000/trips?q=${search}`)
       .then((respon) => {
         setData (respon.data);
+        console.log(data)
       })
       .catch((error) => {
         console.log(error)
       })
-  }, []);
+  }, [search]);
 
-  // useEffect(() => {
-  //   setCheck(
-  //     data.filter((data) =>
-  //       data.tags.includes(search)|| data.title.includes(search)|| data.eid.includes(search)|| data.desciption.includes(search)
-  //     )
-  //   );
-  // }, [search, data]);
-
-  const check = data.map(data => {
-    return data
-  })
 
   return (
     <div>
      
     <Container className={classes.Container} >
       <h1  style={{textAlign:'center'}} >10 popular tourist attractions from wongnai</h1>
-      <form style={{textAlign:'center'}} action="/" method="get"
+      <form style={{textAlign:'center'}} 
       >
         <TextField 
           onChange={(event) => {
             setSearch(event.target.value)
-  
           }}
-
-          value={search}
           id="outlined-full-width"
           style={{ width: 400}}
           placeholder="search"
@@ -84,7 +69,7 @@ function App() {
         />
       </form>
       <br/>
-      {check.map((data,idx) => (
+      {data.map((data,idx) => (
       <DataItem key={idx} {...data} />
       ))}
     </Container>
@@ -97,29 +82,17 @@ function App() {
 // title,description,photos,tags,eid,url
 const DataItem = ({ title,photos,description,eid,tags,url})=>{
 const classes = useStyles();
-
+const Tags = tags.map((tags) => 
+<li>{tags}</li>
+  );
 return (
     <div className={classes.root}>
       <Paper className={classes.paper}>
         <Grid container spacing={2}>
           <Typography gutterBottom variant="subtitle1" >
                 <h2 >{eid}.{title}</h2>
-                
-              <Tooltip >
-                <Button><h3>หมวดหมู่</h3></Button>
-              </Tooltip>
-              <Tooltip >
-                <Button><h4>{tags[0]}</h4></Button>
-              </Tooltip>
-              <Tooltip >
-                <Button><h4>{tags[1]}</h4></Button>
-              </Tooltip>
-              <Tooltip>
-                <Button><h4>{tags[2]}</h4></Button>
-              </Tooltip>
-              <Tooltip >
-                <Button><h4>{tags[3]}</h4></Button>
-            </Tooltip>
+                <h3>หมวดหมู่</h3>
+                <ul>{Tags}</ul>
           </Typography>
           <Typography gutterBottom variant="subtitle1">
                 {description}
