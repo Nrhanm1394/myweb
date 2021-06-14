@@ -34,9 +34,11 @@ import {TextField,Container,Grid,ButtonBase,Typography,Paper,Tooltip,Button,Form
 function App() {
   const [data, setData] = useState([]);
   const [search,setSearch] = useState('');
-  const [check,setCheck] = useState ([]);
+  // const [check,setCheck] = useState ([]);
   const classes = useStyles();
-  
+  // const query = new URLSearchParams(search).get('q');
+  // const filteredData = filterPosts(data, searchQuery);
+  // const [searchQuery, setSearchQuery] = useState(query || '');
   useEffect(() => {
     axios
       .get(`http://localhost:9000/trips`)
@@ -47,24 +49,26 @@ function App() {
         console.log(error)
       })
   }, []);
-  
+
   // useEffect(() => {
   //   setCheck(
   //     data.filter((data) =>
-  //       data.includes(search)
+  //       data.tags.includes(search)|| data.title.includes(search)|| data.eid.includes(search)|| data.desciption.includes(search)
   //     )
   //   );
   // }, [search, data]);
 
-
+  const check = data.map(data => {
+    return data
+  })
 
   return (
     <div>
      
     <Container className={classes.Container} >
       <h1  style={{textAlign:'center'}} >10 popular tourist attractions from wongnai</h1>
-      <form style={{textAlign:'center'}} action="/" method="get">
-
+      <form style={{textAlign:'center'}} action="/" method="get"
+      >
         <TextField 
           onChange={(event) => {
             setSearch(event.target.value)
@@ -80,7 +84,7 @@ function App() {
         />
       </form>
       <br/>
-      {data.map((data,idx) => (
+      {check.map((data,idx) => (
       <DataItem key={idx} {...data} />
       ))}
     </Container>
