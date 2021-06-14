@@ -1,7 +1,10 @@
-import React, {useEffect, useState} from 'react';
+import React, { useEffect, useState} from 'react';
 import axios from 'axios';
 import { makeStyles } from '@material-ui/core/styles';
-import {TextField,Container,Grid,ButtonBase,Typography,Paper,Tooltip,Button} from'@material-ui/core';
+import {TextField,Container,Grid,ButtonBase,Typography,Paper,Tooltip,Button,FormControl} from'@material-ui/core';
+
+
+
 
    const useStyles = makeStyles((theme) => ({
       root: {
@@ -24,73 +27,75 @@ import {TextField,Container,Grid,ButtonBase,Typography,Paper,Tooltip,Button} fro
     maxWidth: '100%',
     background: 'SEASHELL',
   },
-  image: {
-    width: 700,
-    height:350,
-  },
-  img: {
-    display: 'block',
-    maxWidth: '100%',
-    maxHeight: '100%',
-  },
+
 
 }));
 
 function App() {
   const [data, setData] = useState([]);
   const [search,setSearch] = useState('');
-  const [loading,setLoading]= useState(false);
+  const [check,setCheck] = useState ([]);
   const classes = useStyles();
- 
+  
   useEffect(() => {
     axios
-      .get("http://localhost:9000/trips")
+      .get(`http://localhost:9000/trips`)
       .then((respon) => {
-        setData(respon.data);
-        setLoading(false);
+        setData (respon.data);
       })
       .catch((error) => {
         console.log(error)
       })
   }, []);
+  
+  // useEffect(() => {
+  //   setCheck(
+  //     data.filter((data) =>
+  //       data.includes(search)
+  //     )
+  //   );
+  // }, [search, data]);
 
-  if(loading){
-    return <p>loading........</p>
-  }
-  const mapData = data.map(data => {
-    return data
-  })
 
 
   return (
+    <div>
+     
     <Container className={classes.Container} >
-      <h2>{loading}</h2>
       <h1  style={{textAlign:'center'}} >10 popular tourist attractions from wongnai</h1>
-      <form style={{textAlign:'center'}}>
+      <form style={{textAlign:'center'}} action="/" method="get">
+
         <TextField 
-          onChange={(event) => {setSearch(event.target.value)}}
+          onChange={(event) => {
+            setSearch(event.target.value)
+  
+          }}
+
+          value={search}
           id="outlined-full-width"
           style={{ width: 400}}
           placeholder="search"
           variant="outlined"
+          name= "q"
         />
       </form>
       <br/>
-
-      {mapData.map((data,idx) => (
+      {data.map((data,idx) => (
       <DataItem key={idx} {...data} />
       ))}
-
     </Container>
 
+    </div>
   );
 }
-//title,description,photos,tags,eid
-const DataItem = ({ title,photos,description,eid,tags})=>{
-  const classes = useStyles();
+
+
+// title,description,photos,tags,eid,url
+const DataItem = ({ title,photos,description,eid,tags,url})=>{
+const classes = useStyles();
+
 return (
     <div className={classes.root}>
-
       <Paper className={classes.paper}>
         <Grid container spacing={2}>
           <Typography gutterBottom variant="subtitle1" >
@@ -112,30 +117,21 @@ return (
                 <Button><h4>{tags[3]}</h4></Button>
             </Tooltip>
           </Typography>
-        
-      
           <Typography gutterBottom variant="subtitle1">
                 {description}
           </Typography>
             <Grid item>
-              <ButtonBase className={classes.image}>
-              <img className={classes.img} alt="complex" src={photos[0]} />
-              </ButtonBase>            
-            </Grid>
-            <Grid item xs={12} sm container>
-              <Grid item xs container direction="column" spacing={2}>
-                <Grid item xs>
-                  <img className={classes.img} alt="complex" src={photos[1]} style={{width:200,height:120}} />
-                  <img className={classes.img} alt="complex" src={photos[2]} style={{width:200,height:120}}/>  
-                  <img className={classes.img} alt="complex" src={photos[3]} style={{width:200,height:120}}/>
-                </Grid>
-              </Grid>
+              <ButtonBase >
+              {photos.map((Image) => (
+                 <img src={Image}  alt=" " style={{width:250,height:180}} />
+               ))}
+              </ButtonBase>        
             </Grid>
         </Grid>
       </Paper>
       <br></br>
     </div>
-  )
+  ) 
 } 
 
 export default App;
